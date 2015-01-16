@@ -12,9 +12,13 @@ rm -f "$infoImplementation"
 touch "$infoHeader"
 touch "$infoImplementation"
 
-displayName=$(/usr/libexec/PlistBuddy -c "Print :CFBundleDisplayName" "$infoPlist")
-bundleIdentifier=$(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$infoPlist")
-bundleShortVersionString=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$infoPlist")
+displayName=`eval echo $(/usr/libexec/PlistBuddy -c "Print :CFBundleDisplayName" "$infoPlist")`
+if [[ -z $displayName ]]; then
+    displayName=`eval echo $(/usr/libexec/PlistBuddy -c "Print :CFBundleName" "$infoPlist")`
+fi
+
+bundleIdentifier=`eval echo $(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$infoPlist")`
+bundleShortVersionString=`eval echo $(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$infoPlist")`
 bundleVersion=`git log --oneline | wc -l | tr -d ' '`
 
 echo "#define ${PROJECT_NAME}_Bundle_Version $bundleVersion" >> "$infoHeader"
