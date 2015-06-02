@@ -1,3 +1,14 @@
+#!/bin/bash
+
+if [[ "${PROJECT_TEMP_DIR}" != "" ]]; then
+    export LOG="${PROJECT_TEMP_DIR}/generate_info.log"
+    rm -rf $LOG
+    exec 3>&1 1>>${LOG} 2>&1
+fi
+
+scriptPath=${0%/*}
+source "$scriptPath/version-info.sh"
+
 cd "${PROJECT_DIR}"
 
 infoPlist="${SRCROOT}/${INFOPLIST_FILE}"
@@ -19,7 +30,7 @@ fi
 
 bundleIdentifier=`eval echo $(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$infoPlist")`
 bundleShortVersionString=`eval echo $(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$infoPlist")`
-bundleVersion=`git log --oneline | wc -l | tr -d ' '`
+bundleVersion=$(version_number)
 
 echo "#define ${PROJECT_NAME}_Bundle_Version $bundleVersion" >> "$infoHeader"
 echo "" >> "$infoHeader"
