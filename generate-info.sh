@@ -33,7 +33,7 @@ bundleIdentifier=`eval echo $(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentif
 bundleShortVersionString=`eval echo $(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$infoPlist")`
 bundleVersion=$(version_number)
 
-echo "#define ${PROJECT_NAME}_Bundle_Version $bundleVersion" >> "$infoHeader"
+echo "#define BUNDLE_VERSION $bundleVersion" >> "$infoHeader"
 echo "" >> "$infoHeader"
 echo "#ifdef __OBJC__" >> "$infoHeader"
 echo "@import Foundation;" >> "$infoHeader"
