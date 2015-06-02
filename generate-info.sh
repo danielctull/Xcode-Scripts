@@ -1,15 +1,16 @@
 #!/bin/bash
 
 if [[ "${PROJECT_TEMP_DIR}" != "" ]]; then
-    export LOG="${PROJECT_TEMP_DIR}/generate_info.log"
-    rm -rf $LOG
-    exec 3>&1 1>>${LOG} 2>&1
+    mkdir -p "${PROJECT_TEMP_DIR}"
+    export LOG="${PROJECT_TEMP_DIR}/generate-info.log"
+    rm -rf "$LOG"
+    exec 3>&1 1>>"${LOG}" 2>&1
 fi
+
+cd "${PROJECT_DIR}"
 
 scriptPath=${0%/*}
 source "$scriptPath/version-info.sh"
-
-cd "${PROJECT_DIR}"
 
 infoPlist="${SRCROOT}/${INFOPLIST_FILE}"
 infoPath="${infoPlist%.*}"

@@ -1,11 +1,5 @@
 #!/bin/bash
 
-if [[ "${PROJECT_TEMP_DIR}" != "" ]]; then
-    export LOG="${PROJECT_TEMP_DIR}/generate_info.log"
-    rm -rf $LOG
-    exec 3>&1 1>>${LOG} 2>&1
-fi
-
 function current_branch {
     echo `git rev-parse --abbrev-ref HEAD`
 }
