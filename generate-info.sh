@@ -1,16 +1,4 @@
-#!/bin/bash
-
-if [[ "${PROJECT_TEMP_DIR}" != "" ]]; then
-    mkdir -p "${PROJECT_TEMP_DIR}"
-    export LOG="${PROJECT_TEMP_DIR}/generate-info.log"
-    rm -rf "$LOG"
-    exec 3>&1 1>>"${LOG}" 2>&1
-fi
-
 cd "${PROJECT_DIR}"
-
-scriptPath=${0%/*}
-source "$scriptPath/version-info.sh"
 
 infoPlist="${SRCROOT}/${INFOPLIST_FILE}"
 infoPath="${infoPlist%.*}"
@@ -25,22 +13,18 @@ touch "$infoHeader"
 touch "$infoImplementation"
 
 displayName=`eval echo $(/usr/libexec/PlistBuddy -c "Print :CFBundleDisplayName" "$infoPlist")`
-if [[ -z $displayName ]]; then
-    displayName=`eval echo $(/usr/libexec/PlistBuddy -c "Print :CFBundleName" "$infoPlist")`
-fi
-
 bundleIdentifier=`eval echo $(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$infoPlist")`
+bundleName=`eval echo $(/usr/libexec/PlistBuddy -c "Print :CFBundleName" "$infoPlist")`
 bundleShortVersionString=`eval echo $(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$infoPlist")`
-bundleVersion=$(version_number)
+bundleVersion=`eval echo $(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$infoPlist")`
 
-echo "#define BUNDLE_VERSION $bundleVersion" >> "$infoHeader"
-echo "" >> "$infoHeader"
 echo "#ifdef __OBJC__" >> "$infoHeader"
 echo "@import Foundation;" >> "$infoHeader"
 echo "" >> "$infoHeader"
 echo "extern const struct $infoName {" >> "$infoHeader"
 echo "	__unsafe_unretained NSString *displayName;" >> "$infoHeader"
 echo "	__unsafe_unretained NSString *bundleIdentifier;" >> "$infoHeader"
+echo "	__unsafe_unretained NSString *bundleName;" >> "$infoHeader"
 echo "	__unsafe_unretained NSString *bundleVersion;" >> "$infoHeader"
 echo "	__unsafe_unretained NSString *bundleShortVersionString;" >> "$infoHeader"
 echo "} $infoName;" >> "$infoHeader"
@@ -51,6 +35,7 @@ echo "" >> "$infoImplementation"
 echo "const struct $infoName $infoName = {" >> "$infoImplementation"
 echo "	.displayName = @\"$displayName\"," >> "$infoImplementation"
 echo "	.bundleIdentifier = @\"$bundleIdentifier\"," >> "$infoImplementation"
+echo "	.bundleName = @\"$bundleName\"," >> "$infoImplementation"
 echo "	.bundleVersion = @\"$bundleVersion\"," >> "$infoImplementation"
 echo "	.bundleShortVersionString = @\"$bundleShortVersionString\"" >> "$infoImplementation"
 echo "};" >> "$infoImplementation"
